@@ -1,0 +1,41 @@
+---
+- name: Install Docker Engine
+  hosts: all
+  become: true
+  tasks:
+    - name: Install required packages
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+
+    - name: Add Docker repository
+      yum_repository:
+        name: docker-ce-stable
+        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        state: present
+
+    - name: Install Docker Engine
+      yum:
+        name: docker-ce
+        state: present
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+- name: Install Docker Compose
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Docker Compose
+      pip:
+        name: docker-compose
+        state: present
